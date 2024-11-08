@@ -15,14 +15,14 @@ import { isFile, isLastPage } from '../utils';
 import { createEnhancedListHandler } from '../../actions/createEnhancedListHandler';
 import { useGetActionInput } from '../../providers/configuration';
 import { displayText } from '../../displayText/en';
+import { LocationState } from '../../providers/store/location';
 
 interface UseLocationDetailView {
   hasError: boolean;
   isLoading: boolean;
   isPaginateNextDisabled: boolean;
   isPaginatePreviousDisabled: boolean;
-  currentLocation: LocationData | undefined;
-  currentPath: string;
+  location: LocationState;
   areAllFilesSelected: boolean;
   fileDataItems: FileData[] | undefined;
   hasFiles: boolean;
@@ -91,8 +91,8 @@ export function useLocationDetailView(
   const listOptions = listOptionsRef.current;
 
   const [{ location, locationItems }, dispatchStoreAction] = useStore();
-  const { current: currentLocation, key, path: currentPath } = location;
-  const { prefix } = currentLocation ?? {};
+  const { current, key } = location;
+  const { prefix } = current ?? {};
   const { fileDataItems } = locationItems;
   const hasInvalidPrefix = isUndefined(prefix);
   const { pageSize } = listOptions;
@@ -183,8 +183,7 @@ export function useLocationDetailView(
   return {
     page: currentPage,
     pageItems,
-    currentLocation,
-    currentPath,
+    location,
     areAllFilesSelected,
     fileDataItems,
     hasFiles: fileItems.length > 0,
@@ -233,7 +232,7 @@ export function useLocationDetailView(
       handleList({
         config: getConfig(),
         // @todo: prefix should not be required to refresh
-        prefix: currentLocation?.prefix ?? '',
+        prefix: prefix ?? '',
         options: { reset: true },
       });
       dispatchStoreAction({ type: 'RESET_ACTION_TYPE' });

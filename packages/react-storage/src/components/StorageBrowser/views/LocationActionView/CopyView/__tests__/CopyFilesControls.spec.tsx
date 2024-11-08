@@ -4,12 +4,13 @@ import userEvent from '@testing-library/user-event';
 
 import * as ReactCoreModule from '@aws-amplify/ui-react-core';
 
-import * as TempActions from '../../../do-not-import-from-here/createTempActionsProvider';
+import * as TempActions from '../../../../do-not-import-from-here/createTempActionsProvider';
 
-import * as Config from '../../../providers/configuration';
-import { INITIAL_STATUS_COUNTS } from '../../../tasks';
-import * as UseCopyViewModule from '../CopyView';
-import { CopyFilesControls } from '../CopyFilesControls';
+import * as Config from '../../../../providers/configuration';
+import { INITIAL_STATUS_COUNTS } from '../../../../tasks';
+import * as UseCopyViewModule from '../useCopyView';
+import { CopyView } from '../CopyView';
+import { CopyViewState } from '../types';
 
 const TEST_ACTIONS = { COPY_FILES: { options: { displayName: 'Copy files' } } };
 jest.spyOn(TempActions, 'useTempActions').mockReturnValue(TEST_ACTIONS);
@@ -64,7 +65,7 @@ const callbacks = {
 
 const statusCounts = { ...INITIAL_STATUS_COUNTS, QUEUED: 1, TOTAL: 1 };
 
-const initialViewState: UseCopyViewModule.CopyViewState = {
+const initialViewState: CopyViewState = {
   ...callbacks,
   destinationList: [],
   isProcessingComplete: false,
@@ -73,12 +74,12 @@ const initialViewState: UseCopyViewModule.CopyViewState = {
   tasks: [taskOne],
 };
 
-const preprocessingViewState: UseCopyViewModule.CopyViewState = {
+const preprocessingViewState: CopyViewState = {
   ...initialViewState,
   destinationList: ['some-prefix'],
 };
 
-const processingViewState: UseCopyViewModule.CopyViewState = {
+const processingViewState: CopyViewState = {
   ...initialViewState,
   destinationList: ['some-prefix'],
   isProcessing: true,
@@ -86,7 +87,7 @@ const processingViewState: UseCopyViewModule.CopyViewState = {
   statusCounts: { ...statusCounts, PENDING: 1, QUEUED: 0 },
 };
 
-const postProcessingViewState: UseCopyViewModule.CopyViewState = {
+const postProcessingViewState: CopyViewState = {
   ...initialViewState,
   destinationList: ['some-prefix'],
   isProcessingComplete: true,
@@ -95,13 +96,13 @@ const postProcessingViewState: UseCopyViewModule.CopyViewState = {
 };
 
 const useCopyViewSpy = jest.spyOn(UseCopyViewModule, 'useCopyView');
-describe('CopyFilesControls', () => {
+describe('CopyView', () => {
   beforeEach(jest.clearAllMocks);
 
   it('renders search input as expected', () => {
     useCopyViewSpy.mockReturnValue(initialViewState);
 
-    const { getByPlaceholderText } = render(<CopyFilesControls />);
+    const { getByPlaceholderText } = render(<CopyView />);
 
     expect(getByPlaceholderText('Search for folders')).toBeInTheDocument();
   });
@@ -109,7 +110,7 @@ describe('CopyFilesControls', () => {
   it('has the expected enabled and disabled flags when a destination has not been set', () => {
     useCopyViewSpy.mockReturnValue(initialViewState);
 
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     expect(getByRole('button', { name: 'Exit' })).not.toBeDisabled();
     expect(getByRole('button', { name: 'Copy' })).toBeDisabled();
@@ -119,7 +120,7 @@ describe('CopyFilesControls', () => {
   it('has the expected enabled and disabled flags when a destination has been set', () => {
     useCopyViewSpy.mockReturnValue(preprocessingViewState);
 
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     expect(getByRole('button', { name: 'Exit' })).not.toBeDisabled();
     expect(getByRole('button', { name: 'Copy' })).not.toBeDisabled();
@@ -129,7 +130,7 @@ describe('CopyFilesControls', () => {
   it('has the expected enabled and disabled flags when copying files', () => {
     useCopyViewSpy.mockReturnValue(processingViewState);
 
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     expect(getByRole('button', { name: 'Exit' })).toBeDisabled();
     expect(getByRole('button', { name: 'Copy' })).toBeDisabled();
@@ -139,7 +140,7 @@ describe('CopyFilesControls', () => {
   it('has the expected enabled and disabled flags when copying files is complete', () => {
     useCopyViewSpy.mockReturnValue(postProcessingViewState);
 
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     expect(getByRole('button', { name: 'Exit' })).not.toBeDisabled();
     expect(getByRole('button', { name: 'Copy' })).toBeDisabled();
@@ -149,7 +150,7 @@ describe('CopyFilesControls', () => {
   it('calls onExit when Exit button is clicked', async () => {
     useCopyViewSpy.mockReturnValue(initialViewState);
 
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     await userEvent.click(getByRole('button', { name: 'Exit' }));
 
@@ -158,7 +159,7 @@ describe('CopyFilesControls', () => {
 
   it('calls onActionStart when Start button is clicked', async () => {
     useCopyViewSpy.mockReturnValue(preprocessingViewState);
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     await userEvent.click(getByRole('button', { name: 'Copy' }));
 
@@ -168,7 +169,7 @@ describe('CopyFilesControls', () => {
   it('calls onActionCancel when Cancel button is clicked', async () => {
     useCopyViewSpy.mockReturnValue(processingViewState);
 
-    const { getByRole } = render(<CopyFilesControls />);
+    const { getByRole } = render(<CopyView />);
 
     await userEvent.click(getByRole('button', { name: 'Cancel' }));
 

@@ -70,8 +70,7 @@ export function LocationDetailView({
     isLoading,
     isPaginatePreviousDisabled,
     isPaginateNextDisabled,
-    currentLocation,
-    currentPath,
+    location,
     areAllFilesSelected,
     fileDataItems,
     hasFiles,
@@ -100,14 +99,12 @@ export function LocationDetailView({
       <ControlsContextProvider
         data={{
           isDataRefreshDisabled: isLoading,
-          currentLocation,
-          currentPath,
+          location,
           searchPlaceholder,
           showIncludeSubfolders,
           tableData: getLocationDetailViewTableData({
             areAllFilesSelected,
-            currentLocation,
-            currentPath,
+            location,
             fileDataItems,
             hasFiles,
             pageItems,

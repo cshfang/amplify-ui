@@ -2,11 +2,11 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 
-import * as UseDeleteViewModule from '../DeleteView/useDeleteView';
-import * as Config from '../../../providers/configuration';
+import * as UseDeleteViewModule from '../useDeleteView';
+import * as Config from '../../../../providers/configuration';
 
-import * as TempActions from '../../../do-not-import-from-here/createTempActionsProvider';
-import { DeleteFilesControls } from '../DeleteFilesControls';
+import * as TempActions from '../../../../do-not-import-from-here/createTempActionsProvider';
+import { DeleteView } from '../DeleteView';
 
 const TEST_ACTIONS = {
   DELETE_FILES: {
@@ -86,7 +86,7 @@ const useDeleteViewSpy = jest
     ],
   });
 
-describe('DeleteFilesControls', () => {
+describe('DeleteView', () => {
   let user: UserEvent;
 
   beforeEach(() => {
@@ -103,7 +103,7 @@ describe('DeleteFilesControls', () => {
   });
 
   it('renders all controls', () => {
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     expect(getByRole('button', { name: 'Exit' })).toBeInTheDocument();
     expect(getByRole('button', { name: 'Start' })).toBeInTheDocument();
@@ -145,7 +145,7 @@ describe('DeleteFilesControls', () => {
       ],
     });
 
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     expect(getByRole('button', { name: 'Exit' })).not.toBeDisabled();
     expect(getByRole('button', { name: 'Start' })).not.toBeDisabled();
@@ -187,7 +187,7 @@ describe('DeleteFilesControls', () => {
       ],
     });
 
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     expect(getByRole('button', { name: 'Exit' })).toBeDisabled();
     expect(getByRole('button', { name: 'Start' })).toBeDisabled();
@@ -229,7 +229,7 @@ describe('DeleteFilesControls', () => {
       ],
     });
 
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     expect(getByRole('button', { name: 'Exit' })).not.toBeDisabled();
     expect(getByRole('button', { name: 'Start' })).toBeDisabled();
@@ -237,7 +237,7 @@ describe('DeleteFilesControls', () => {
   });
 
   it('calls onExit when Exit button is clicked', async () => {
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     const button = getByRole('button', { name: 'Exit' });
 
@@ -249,7 +249,7 @@ describe('DeleteFilesControls', () => {
   });
 
   it('calls onActionStart when Start button is clicked', async () => {
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     const button = getByRole('button', { name: 'Start' });
 
@@ -295,7 +295,7 @@ describe('DeleteFilesControls', () => {
       ],
     });
 
-    const { getByRole } = render(<DeleteFilesControls />);
+    const { getByRole } = render(<DeleteView />);
 
     const button = getByRole('button', { name: 'Cancel' });
 

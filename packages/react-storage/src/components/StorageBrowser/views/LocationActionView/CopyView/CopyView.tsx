@@ -1,51 +1,52 @@
 import React from 'react';
 
-import { ViewElement } from '../../context/elements';
+import { ViewElement } from '../../../context/elements';
 
-import { Controls } from '../Controls';
+import { Controls } from '../../Controls';
 
-import { Title } from './Controls/Title';
-import { displayText } from '../../displayText/en';
-import { CLASS_BASE } from '../constants';
+import { Title } from '../Controls/Title';
+import { displayText } from '../../../displayText/en';
+import { CLASS_BASE } from '../../constants';
 import { DestinationPicker } from './DestinationPicker';
 
-import { useCopyView } from './CopyView';
-import { DataTableControl } from '../../controls/DataTableControl';
-import { ControlsContextProvider } from '../../controls/context';
-import { getActionViewTableData } from './utils';
-import { useStore } from '../../providers/store';
-import { ControlsContext } from '../../controls/types';
-import { ActionStartControl } from '../../controls/ActionStartControl';
-import { DescriptionList } from '../../components/DescriptionList';
-import { StatusDisplayControl } from '../../controls/StatusDisplayControl';
-import { getDestinationListFullPrefix } from './utils/getDestinationPickerDataTable';
-import { ActionCancelControl } from '../../controls/ActionCancelControl';
+import { DataTableControl } from '../../../controls/DataTableControl';
+import { ControlsContextProvider } from '../../../controls/context';
+import { getActionViewTableData } from '../getActionViewTableData';
+import { ControlsContext } from '../../../controls/types';
+import { ActionStartControl } from '../../../controls/ActionStartControl';
+import { DescriptionList } from '../../../components/DescriptionList';
+import { StatusDisplayControl } from '../../../controls/StatusDisplayControl';
+import { getDestinationListFullPrefix } from './getDestinationListFullPrefix';
+import { ActionCancelControl } from '../../../controls/ActionCancelControl';
+import { useCopyView } from './useCopyView';
+import { CopyViewProps } from './types';
 
 const { Exit } = Controls;
 const { actionSetDestination } = displayText;
 
-export const CopyFilesControls = (props: {
-  onExit?: () => void;
-}): React.JSX.Element => {
+export const CopyView = ({
+  onExit: onExitProps,
+}: CopyViewProps): React.JSX.Element => {
   const {
     destinationList,
-    onDestinationChange,
     isProcessing,
     isProcessingComplete,
-    onExit,
-    onActionCancel,
-    onActionStart,
+    location,
     statusCounts,
     tasks,
-  } = useCopyView(props);
-
-  const [{ location }] = useStore();
-  const { key } = location;
+    onActionCancel,
+    onActionStart,
+    onDestinationChange,
+    onExit,
+    onTaskCancel,
+  } = useCopyView({ onExit: onExitProps });
 
   const tableData = getActionViewTableData({
     tasks,
-    folder: key,
+    locationKey: location.key,
     isProcessing,
+    shouldDisplayProgress: false,
+    onTaskCancel,
   });
 
   const isActionStartDisabled =
@@ -71,7 +72,7 @@ export const CopyFilesControls = (props: {
       <Exit onClick={onExit} disabled={isProcessing} />
       <Title />
       <ViewElement className={`${CLASS_BASE}__table-wrapper`}>
-        <DataTableControl className={`${CLASS_BASE}__table`} />
+        <DataTableControl className={`${CLASS_BASE}__copy-view-data-table`} />
       </ViewElement>
       {isProcessing || isProcessingComplete ? (
         <ViewElement className={`${CLASS_BASE}__action-destination`}>

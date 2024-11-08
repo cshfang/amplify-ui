@@ -1,33 +1,7 @@
 import { FileDataItem } from '../../../actions/handlers';
 import { Tasks } from '../../../tasks';
 
-import {
-  getActionIconVariant,
-  getFileTypeDisplayValue,
-  getActionViewTableData,
-} from '../utils';
-
-describe('getActionIconVariant', () => {
-  it('should return correct icon variant for each status', () => {
-    expect(getActionIconVariant('QUEUED')).toBe('action-queued');
-    expect(getActionIconVariant('PENDING')).toBe('action-progress');
-    expect(getActionIconVariant('COMPLETE')).toBe('action-success');
-    expect(getActionIconVariant('FAILED')).toBe('action-error');
-    expect(getActionIconVariant('CANCELED')).toBe('action-canceled');
-  });
-});
-
-describe('getFileTypeDisplayValue', () => {
-  it('should return the file extension', () => {
-    expect(getFileTypeDisplayValue('document.pdf')).toBe('pdf');
-    expect(getFileTypeDisplayValue('image.jpg')).toBe('jpg');
-    expect(getFileTypeDisplayValue('script.ts')).toBe('ts');
-  });
-
-  it('should return an empty string for files without extension', () => {
-    expect(getFileTypeDisplayValue('README')).toBe('');
-  });
-});
+import { getActionViewTableData } from '../getActionViewTableData';
 
 describe('getActionViewTableData', () => {
   const mockRemove = jest.fn();
